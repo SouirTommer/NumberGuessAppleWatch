@@ -10,7 +10,6 @@ import WatchKit
 
 struct ContentView: View {
 
-  @State private var showAlert = false
   @State private var selectedNumber = 50
   @State private var randomNumber = Int.random(in: 1...100)
   @State private var presentAlert = false

@@ -6,21 +6,100 @@
 //
 
 import SwiftUI
+import WatchKit
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+  @State private var showAlert = false
+  @State private var selectedNumber = 50
+  @State private var randomNumber = Int.random(in: 1...100)
+  @State private var presentAlert = false
+  @State private var remainingGuesses = 5
+  @State private var alertTitle = ""
+  @State private var alertMessage = ""
+  @State var money: Int
+  @State var Selectmoney: Int
+  @State var backFlag = false
+
+  @Environment(\.presentationMode) var presentationMode
+
+  let numbers = Array(1...100)
+
+  var body: some View {
+    NavigationView {
+      VStack {
+
+        Text("猜數字遊戲")
+          .font(.title2)
+          .foregroundColor(.white)
+          .padding()
+
+        Picker("滾動輸入數字", selection: $selectedNumber) {
+          ForEach(numbers, id: \.self) { number in
+            Text("\(number)")
+          }
+        }
+        .pickerStyle(WheelPickerStyle())
+        .frame(width: 100)
+        .padding(.bottom)
+
+        Button(
+          action: {
+            presentAlert = true
+            checkGuess(num: selectedNumber)
+          },
+          label: {
+            Text("ok")
+          }
+        )
+        .frame(width: 150, height: 20)
+        .padding(10)
+        .alert(
+          "\(alertTitle) \n\n \(alertMessage)", isPresented: $presentAlert,
+          actions: {
+            Button(action: {
+              if backFlag == true {
+                restart()
+              }
+            }) {
+              Text("確認")
+            }
+          })
+      }
     }
+  }
+  func checkGuess(num: Int) {
+    if num == randomNumber {
+      alertTitle = "恭喜你！"
+      alertMessage = "你猜中了！ 答案是 \(randomNumber) \n 你額外贏得了$ \(Selectmoney)"
+      money = money + (Selectmoney * 2)
+      UserDefaults.standard.set(money, forKey: "money")
+      backFlag = true
+    } else {
+      remainingGuesses -= 1
+      if remainingGuesses == 0 {
+        alertTitle = "遊戲結束"
+        alertMessage = "你沒有猜中。答案是 \(randomNumber) \n 你失去了$ \(Selectmoney)"
+        money -= Selectmoney
+        UserDefaults.standard.set(money, forKey: "money")
+        backFlag = true
+
+      } else if num < randomNumber {
+        alertTitle = "剩餘猜測次數: \(remainingGuesses)"
+        alertMessage = "請再猜一個大一點的數字"
+
+      } else {
+        alertTitle = "剩餘猜測次數: \(remainingGuesses)"
+        alertMessage = "請再猜一個小一點的數字"
+
+      }
+    }
+  }
+  func restart() {
+    remainingGuesses = 5
+    randomNumber = Int.random(in: 1...100)
+
+    self.presentationMode.wrappedValue.dismiss()
+  }
+
 }

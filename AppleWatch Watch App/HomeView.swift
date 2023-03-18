@@ -13,6 +13,7 @@ struct HomeView: View {
   @State private var action = 0
   @State private var selectedNumber = 0
   @State private var presentAlert = false
+  @State var savedMoney: Int = 0
 
   var body: some View {
     var numbers = money > 0 ? Array(1...money) : []
@@ -64,22 +65,22 @@ struct HomeView: View {
           }
         }
           
-          if money == 0{
-              
-              NavigationLink(destination: ContentView(money: money, Selectmoney: selectedNumber)) {
-                  Text("請增值!")
-                }
-              .disabled(true)
-              
-          } else {
-              
+
+          if money != 0 || selectedNumber > 0 {
               NavigationLink(destination: ContentView(money: money, Selectmoney: selectedNumber)) {
                   Text("加入賭注!")
               }.simultaneousGesture(TapGesture().onEnded{
                   money -= selectedNumber
                   UserDefaults.standard.set(money, forKey: "money")
                   print("Starting game!")
+                  print("the money is \(money) and selectmoney is \(selectedNumber)")
               })
+          } else{
+              
+              NavigationLink(destination: ContentView(money: money, Selectmoney: selectedNumber)) {
+                  Text("請增值!")
+                }
+              .disabled(true)
           }
         
           
@@ -100,14 +101,13 @@ struct HomeView: View {
   }
 
   func CheckMoney() -> Int {
-    if let savedMoney = UserDefaults.standard.object(forKey: "money")
-      as? Int, savedMoney > 0
-    {
-      print("-----loading the money------")
-      return savedMoney
-    } else {
-      UserDefaults.standard.set(0, forKey: "money")
-      return 0
-    }
+      savedMoney = UserDefaults.standard.object(forKey: "money") as? Int ?? 0
+        if savedMoney > 0{
+            print("-----loading the money------ the money is \(savedMoney)")
+            return savedMoney
+        } else{
+            UserDefaults.standard.set(0, forKey: "money")
+            return 0
+        }
   }
 }

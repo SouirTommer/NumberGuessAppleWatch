@@ -20,6 +20,7 @@ struct ContentView: View {
   @State var Selectmoney: Int
   @State var backFlag = false
 
+
   @Environment(\.presentationMode) var presentationMode
 
   let numbers = Array(1...100)
@@ -72,6 +73,7 @@ struct ContentView: View {
       alertTitle = "恭喜你！"
       alertMessage = "你猜中了！ 答案是 \(randomNumber) \n 你額外贏得了$ \(Selectmoney)"
       money = money + (Selectmoney * 2)
+      print("WIN! current money : \(money), bet : \(Selectmoney)")
       UserDefaults.standard.set(money, forKey: "money")
       backFlag = true
     } else {
@@ -79,8 +81,11 @@ struct ContentView: View {
       if remainingGuesses == 0 {
         alertTitle = "遊戲結束"
         alertMessage = "你沒有猜中。答案是 \(randomNumber) \n 你失去了$ \(Selectmoney)"
-        money -= Selectmoney
+//        money -= Selectmoney
+          print("LOSE! current money : \(money), bet : \(Selectmoney)")
         UserDefaults.standard.set(money, forKey: "money")
+        
+        print("Checking Database ... The money is \(UserDefaults.standard.object(forKey: "money"))")
         backFlag = true
 
       } else if num < randomNumber {

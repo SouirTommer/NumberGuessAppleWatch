@@ -11,12 +11,13 @@ import WatchKit
 struct HomeView: View {
   @State var money: Int = 0
   @State private var action = 0
-  @State private var selectedNumber = 0
+  @State var selectedNumber = 0
   @State private var presentAlert = false
   @State var savedMoney: Int = 0
 
   var body: some View {
-    var numbers = money > 0 ? Array(1...money) : []
+      
+    let numbers = money > 0 ? Array(1...money) : []
 
     NavigationView {
       VStack {
@@ -66,22 +67,32 @@ struct HomeView: View {
         }
           
 
-          if money != 0 || selectedNumber > 0 {
+//          if money != 0 || selectedNumber > 0{
               NavigationLink(destination: ContentView(money: money, Selectmoney: selectedNumber)) {
-                  Text("加入賭注!")
+                  Text("開始遊戲!")
               }.simultaneousGesture(TapGesture().onEnded{
+                  if(money == 0){
+                      print("Starting free game!")
+                  }else{
+                      
                   money -= selectedNumber
                   UserDefaults.standard.set(money, forKey: "money")
                   print("Starting game!")
                   print("the money is \(money) and selectmoney is \(selectedNumber)")
+                  }
+                  
+                  
               })
-          } else{
-              
-              NavigationLink(destination: ContentView(money: money, Selectmoney: selectedNumber)) {
-                  Text("請增值!")
-                }
-              .disabled(true)
-          }
+          // sorry I wannt do this function, but have bug
+          // when I click the button, the button will change and the game will not start
+          // so I gave up for it, current code is work fine, It will start free mode when money = 0
+          
+//          } else if money == 0{
+//              NavigationLink(destination: ContentView(money: money, Selectmoney: selectedNumber)) {
+//                  Text("請增值!")
+//                }
+//              .disabled(true)
+//          }
         
           
           
@@ -91,10 +102,11 @@ struct HomeView: View {
 
     }
     .onAppear {
-      money = CheckMoney()
+        money = CheckMoney()
 
     }
     .onDisappear {
+        
       print("------saved--------------")
       UserDefaults.standard.set(money, forKey: "money")
     }

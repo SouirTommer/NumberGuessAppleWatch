@@ -81,7 +81,7 @@ struct ContentView: View {
       if remainingGuesses == 0 {
         alertTitle = "遊戲結束"
         alertMessage = "你沒有猜中。答案是 \(randomNumber) \n 你失去了$ \(Selectmoney)"
-//        money -= Selectmoney
+        
           print("LOSE! current money : \(money), bet : \(Selectmoney)")
         UserDefaults.standard.set(money, forKey: "money")
         

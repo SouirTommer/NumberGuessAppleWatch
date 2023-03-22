@@ -19,6 +19,8 @@ struct ContentView: View {
   @State var money: Int
   @State var Selectmoney: Int
   @State var backFlag = false
+  @State private var maxNum = 100
+  @State private var minNum = 1
 
 
   @Environment(\.presentationMode) var presentationMode
@@ -89,12 +91,14 @@ struct ContentView: View {
         backFlag = true
 
       } else if num < randomNumber {
+        minNum = num
         alertTitle = "剩餘猜測次數: \(remainingGuesses)"
-        alertMessage = "請再猜一個大一點的數字"
+        alertMessage = "請再猜一個大一點的數字: \n \(minNum) - \(maxNum)"
 
       } else {
+        maxNum = num
         alertTitle = "剩餘猜測次數: \(remainingGuesses)"
-        alertMessage = "請再猜一個小一點的數字"
+        alertMessage = "請再猜一個小一點的數字: \n \(minNum) - \(maxNum)"
 
       }
     }
